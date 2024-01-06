@@ -50,12 +50,12 @@ class _TabsScreenState extends State<TabsScreen> {
         duration: const Duration(milliseconds: 500),
         currentIndex: _SelectedTab.values.indexOf(_selectedTab),
         unselectedItemColor: Colors.greenAccent,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         onTap: _handleIndexChanged,
         indicatorColor: Colors.greenAccent,
         enableFloatingNavBar: false,
         enablePaddingAnimation: true,
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.black,
         margin: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
         borderRadius: 20,
         items: [
@@ -63,7 +63,7 @@ class _TabsScreenState extends State<TabsScreen> {
           CrystalNavigationBarItem(
             icon: IconlyBold.home,
             unselectedIcon: IconlyLight.home,
-            selectedColor: Colors.white,
+            selectedColor: Colors.green,
           ),
 
           /// Favourite
@@ -77,14 +77,14 @@ class _TabsScreenState extends State<TabsScreen> {
           CrystalNavigationBarItem(
             icon: IconlyBold.plus,
             unselectedIcon: IconlyLight.plus,
-            selectedColor: Colors.white,
+            selectedColor: Colors.green,
           ),
 
           /// Search
           CrystalNavigationBarItem(
               icon: IconlyBold.search,
               unselectedIcon: IconlyLight.search,
-              selectedColor: Colors.white),
+              selectedColor: Colors.green),
 
           /// Profile
           CrystalNavigationBarItem(

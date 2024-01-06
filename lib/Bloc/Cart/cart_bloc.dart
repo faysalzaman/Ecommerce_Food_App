@@ -44,6 +44,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             emit(CartErrorState(e.toString().replaceAll("Exception:", "")));
           }
         }
+        if (event is AddOrRemoveFromCartEvent) {
+          emit(AddOrRemoveFromCartLoading());
+          try {
+            bool networkStatus = await isNetworkAvailable();
+            if (networkStatus) {
+              final foods = await CartController.addOrRemoveFromCart(
+                event.userId,
+                event.foodId,
+              );
+              emit(AddOrRemoveFromCartLoadedState(foods.message));
+            } else {
+              emit(AddOrRemoveFromCartErrorState("No Internet Connection"));
+            }
+          } catch (e) {
+            emit(AddOrRemoveFromCartErrorState(
+                e.toString().replaceAll("Exception:", "")));
+          }
+        }
       },
     );
   }

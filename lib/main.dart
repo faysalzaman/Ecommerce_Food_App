@@ -21,12 +21,19 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Crystal Bottom Bar',
+        title: 'Food App',
         theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         themeMode: ThemeMode.light,
-        home: const SplashScreen(),
+        // disable the orientation change
+        home: OrientationBuilder(
+          builder: (context, orientation) {
+            return orientation == Orientation.portrait
+                ? const SplashScreen()
+                : const SplashScreen();
+          },
+        ),
       ),
     );
   }

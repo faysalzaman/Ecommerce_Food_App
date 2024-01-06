@@ -25,12 +25,16 @@ class FoodsDetailsScreen extends StatefulWidget {
 class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
   WishListBloc wishListBloc = WishListBloc();
   CartBloc cartBloc = CartBloc();
+  CartBloc addOrRemoveFromCart = CartBloc();
 
   Future<String> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String userId = prefs.getString("userId")!;
     return userId;
   }
+
+  String cartButtonName = "Add to Cart";
+  IconData favoriteIcon = Icons.favorite_outline;
 
   @override
   void initState() {
@@ -39,12 +43,11 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
       String userId = await getUserId();
       wishListBloc.add(WishListCheckEvent(userId, widget.foods.sId!));
       cartBloc.add(GetCartEvent(userId, widget.foods.sId!));
+      addOrRemoveFromCart
+          .add(AddOrRemoveFromCartEvent(userId, widget.foods.sId!));
       context.read<CartBloc>().add(GetCartByIdEvent(userId, "1", "10"));
     });
   }
-
-  bool isFavorite = false;
-  bool isInCart = false;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +113,9 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
             listener: (context, state) {
               if (state is CartLoadedState) {
                 print("Is in cart: ${state.isInCart}");
-                isInCart = state.isInCart;
+                cartButtonName = state.isInCart == false
+                    ? "Add to Cart"
+                    : "Remove from Cart";
               }
             },
           ),
@@ -119,7 +124,9 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
             listener: (context, state) {
               if (state is WishListLoadedState) {
                 print("Is in wish list: ${state.isInWishList}");
-                isFavorite = state.isInWishList;
+                favoriteIcon = state.isInWishList == false
+                    ? Icons.favorite_outline
+                    : Icons.favorite;
               }
             },
           ),
@@ -159,28 +166,9 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
                             ).shimmer();
                           }
                           return IconButton(
-                            onPressed: () {
-                              if (isFavorite == false) {
-                                //   wishListBloc.add(
-                                //     WishListAddEvent(
-                                //       widget.foods.sId!,
-                                //       widget.foods.foodName!,
-                                //       widget.foods.image!,
-                                //       widget.foods.price!,
-                                //     ),
-                                //   );
-                                // } else {
-                                //   wishListBloc.add(
-                                //     WishListRemoveEvent(
-                                //       widget.foods.sId!,
-                                //     ),
-                                //   );
-                              }
-                            },
+                            onPressed: () {},
                             icon: Icon(
-                              isFavorite == false
-                                  ? Icons.favorite_outline
-                                  : Icons.favorite,
+                              favoriteIcon,
                               color: Colors.red,
                               size: 50,
                             ),
@@ -261,27 +249,10 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
                       onPressed: () {},
                     ).paddingAll(10);
                   }
+
                   return ButtonWidget(
-                    text:
-                        isInCart == false ? "Add to Cart" : "Remove from Cart",
-                    onPressed: () {
-                      // if (isInCart == false) {
-                      //   cartBloc.add(
-                      //     AddToCartEvent(
-                      //       widget.foods.sId!,
-                      //       widget.foods.foodName!,
-                      //       widget.foods.image!,
-                      //       widget.foods.price!,
-                      //     ),
-                      //   );
-                      // } else {
-                      //   cartBloc.add(
-                      //     RemoveFromCartEvent(
-                      //       widget.foods.sId!,
-                      //     ),
-                      //   );
-                      // }
-                    },
+                    text: cartButtonName,
+                    onPressed: () {},
                   ).paddingAll(10);
                 },
               ),

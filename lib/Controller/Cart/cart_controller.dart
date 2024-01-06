@@ -58,4 +58,32 @@ class CartController {
       throw Exception(e);
     }
   }
+
+  static Future<ApiResponse> addOrRemoveFromCart(
+    String userId,
+    String foodId,
+  ) async {
+    var url = "${AppUrls.baseUrl}/add-or-remove-food-item-addtocart";
+    try {
+      var response = await ApiManager.postRequest(
+        url,
+        {"userId": userId, "foodId": foodId},
+      );
+      var data = jsonDecode(response.body);
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        List<GetCartByUserIdModel> foods = [];
+        data["data"].forEach((v) {
+          foods.add(GetCartByUserIdModel.fromJson(v));
+        });
+        return ApiResponse.fromJson(data, (data) => null);
+      } else {
+        String error = data['message'];
+        throw Exception(error);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

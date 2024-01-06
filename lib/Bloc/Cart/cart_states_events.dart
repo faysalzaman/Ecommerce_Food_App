@@ -35,3 +35,21 @@ class GetCartByIdLoadedState extends CartState {
   final List<GetCartByUserIdModel> cartList;
   GetCartByIdLoadedState(this.cartList);
 }
+
+class AddOrRemoveFromCartEvent extends CartEvent {
+  final String userId;
+  final String foodId;
+  AddOrRemoveFromCartEvent(this.userId, this.foodId);
+}
+
+class AddOrRemoveFromCartLoadedState extends CartState {
+  final String message;
+  AddOrRemoveFromCartLoadedState(this.message);
+}
+
+class AddOrRemoveFromCartErrorState extends CartState {
+  final String message;
+  AddOrRemoveFromCartErrorState(this.message);
+}
+
+class AddOrRemoveFromCartLoading extends CartState {}
