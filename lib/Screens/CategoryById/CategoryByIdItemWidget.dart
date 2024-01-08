@@ -82,8 +82,17 @@ class _CategoryByIdItemWidgetState extends State<CategoryByIdItemWidget> {
         },
         builder: (context, state) {
           if (state is FoodsLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return GridView.builder(
+              itemCount: 6, // number of shimmer items you want to show
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemBuilder: (context, index) {
+                return CategoryByItemWidgetShimmer();
+              },
             );
           } else if (state is FoodsError) {
             return const Center(
@@ -191,27 +200,30 @@ class _CategoryByIdItemWidgetState extends State<CategoryByIdItemWidget> {
     );
   }
 
-  Column CategoryByItemWidgetShimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
+  Widget CategoryByItemWidgetShimmer() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
             child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  color: Colors.grey[100],
-                ).shimmer(
-                  secondaryColor: Colors.white,
-                ))),
-        5.height,
-        Container(
-          height: 16,
-          width: 100,
-          color: Colors.grey[100],
-        ).shimmer(
-          secondaryColor: Colors.white,
-        ),
-      ],
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                color: Colors.grey[100],
+              ).shimmer(
+                secondaryColor: Colors.white,
+              ),
+            ),
+          ),
+          5.height,
+          Container(
+            height: 16,
+            width: 100,
+            color: Colors.grey[100],
+          ).shimmer(secondaryColor: Colors.white),
+        ],
+      ),
     );
   }
 }

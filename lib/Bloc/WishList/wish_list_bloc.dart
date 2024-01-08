@@ -26,5 +26,45 @@ class WishListBloc extends Bloc<WishListEvent, WishListState> {
         }
       },
     );
+    on<AddOrRemoveFromWishListEvent>(
+      (event, emit) async {
+        emit(AddOrRemoveFromWishListLoading());
+        try {
+          bool networkStatus = await isNetworkAvailable();
+          if (networkStatus) {
+            final foods = await WishListController.addOrRemoveFromWishList(
+              event.userId,
+              event.foodId,
+            );
+            emit(AddOrRemoveFromWishListLoadedState(foods.message));
+          } else {
+            emit(AddOrRemoveFromWishListErrorState("No Internet Connection"));
+          }
+        } catch (e) {
+          emit(AddOrRemoveFromWishListErrorState(
+              e.toString().replaceAll("Exception:", "")));
+        }
+      },
+    );
+    on<GetFoodsInFavoriteEvent>(
+      (event, emit) async {
+        emit(WishListLoadingState());
+        try {
+          bool networkStatus = await isNetworkAvailable();
+          if (networkStatus) {
+            final foods = await WishListController.getWishListByUserId(
+              event.userId,
+              event.page,
+              event.pageSize,
+            );
+            emit(GetFoodsInFavoriteLoadedState(foods.data));
+          } else {
+            emit(WishListErrorState("No Internet Connection"));
+          }
+        } catch (e) {
+          emit(WishListErrorState(e.toString().replaceAll("Exception:", "")));
+        }
+      },
+    );
   }
 }

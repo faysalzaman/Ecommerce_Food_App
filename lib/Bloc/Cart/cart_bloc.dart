@@ -53,7 +53,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 event.userId,
                 event.foodId,
               );
-              emit(AddOrRemoveFromCartLoadedState(foods.message));
+              emit(AddOrRemoveFromCartLoadedState(foods.message.toString()));
             } else {
               emit(AddOrRemoveFromCartErrorState("No Internet Connection"));
             }

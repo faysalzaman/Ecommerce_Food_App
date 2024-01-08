@@ -2,6 +2,7 @@
 
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
+import 'package:food_ecommerce_app/Screens/Favorite/favorite_screen.dart';
 import 'package:food_ecommerce_app/Screens/HomeScreen/HomeScreen.dart';
 import 'package:food_ecommerce_app/Screens/UserDetails/UserDetailsScreen.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   var pages = [
     const HomeScreen(),
-    Container(
-      color: Colors.blue,
-    ),
+    const FavoriteScreen(),
     Container(
       color: Colors.green,
     ),
@@ -50,7 +49,7 @@ class _TabsScreenState extends State<TabsScreen> {
         duration: const Duration(milliseconds: 500),
         currentIndex: _SelectedTab.values.indexOf(_selectedTab),
         unselectedItemColor: Colors.greenAccent,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey.shade50,
         onTap: _handleIndexChanged,
         indicatorColor: Colors.greenAccent,
         enableFloatingNavBar: false,

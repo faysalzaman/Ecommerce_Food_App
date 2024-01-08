@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_unnecessary_containers
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/Cart/cart_bloc.dart';
@@ -17,18 +17,29 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  Future<String> getUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userId = prefs.getString("userId").toString();
-    return userId;
-  }
+  String userId = "";
+
+  int cartLength = 0;
 
   @override
   void initState() {
     super.initState();
     getUserId().then((value) {
-      context.read<CartBloc>().add(GetCartByIdEvent(value, "1", "10"));
+      context.read<CartBloc>().add(GetCartByIdEvent(value, "1", "100"));
     });
+  }
+
+  Future<String> getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userIdd = prefs.getString("userId").toString();
+    setState(() {
+      userId = userIdd;
+    });
+    return userIdd;
+  }
+
+  removeFromCart(String foodId) {
+    context.read<CartBloc>().add(AddOrRemoveFromCartEvent(userId, foodId));
   }
 
   @override
@@ -37,7 +48,14 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         title: const Text('Cart'),
       ),
-      body: BlocBuilder<CartBloc, CartState>(
+      body: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          if (state is GetCartByIdLoadedState) {
+            cartLength = state.cartList.length;
+          } else if (state is AddOrRemoveFromCartLoadedState) {
+            
+          }
+        },
         builder: (context, state) {
           if (state is CartLoadingState) {
             return const CartShimmerWidget();
@@ -46,79 +64,100 @@ class _CartScreenState extends State<CartScreen> {
             return ListView.builder(
               itemCount: state.cartList.length,
               itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              state.cartList[index].foodId!.image.toString(),
-                          fit: BoxFit.cover,
+                return GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                          width: 100,
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                state.cartList[index].foodId!.image.toString(),
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                state.cartList[index].foodId!.foodName
+                                    .toString(),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                "Rs. ${state.cartList[index].foodId!.price.toString()}",
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.green,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  var foodId = state.cartList[index].foodId!.sId
+                                      .toString();
+                                  removeFromCart(foodId);
+                                },
+                                icon: const Icon(Icons.delete_forever),
+                                color: Colors.red,
+                              )
+                            ],
+                          ),
+                        ),
+                        Row(
                           children: [
-                            Text(
-                              state.cartList[index].foodId!.foodName.toString(),
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.remove),
                             ),
-                            const SizedBox(height: 8),
                             Text(
-                              "Rs. ${state.cartList[index].foodId!.price.toString()}",
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.green,
-                              ),
+                              state.cartList[index].quantity.toString(),
                             ),
-                            const SizedBox(height: 8),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.add),
+                            ),
                           ],
                         ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.remove),
-                          ),
-                          Text(
-                            state.cartList[index].quantity.toString(),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.add),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
             );
           }
-          return Container();
+          return Center(
+            child: CachedNetworkImage(
+              imageUrl: "https://www.buy.airoxi.com/img/empty-cart-1.png",
+              fit: BoxFit.cover,
+              width: double.infinity,
+            ),
+          );
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ButtonWidget(
-          color: AppColors.primaryColor,
-          text: "Proceed to Pay",
-          onPressed: () {},
+      bottomNavigationBar: Visibility(
+        visible: cartLength > 0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ButtonWidget(
+            color: AppColors.primaryColor,
+            text: "Proceed to Pay",
+            onPressed: () {},
+          ),
         ),
       ),
     );
@@ -133,7 +172,7 @@ class CartShimmerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 3,
+      itemCount: 5,
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.all(8),
