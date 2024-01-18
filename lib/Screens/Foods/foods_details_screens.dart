@@ -45,11 +45,10 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      String userId = await getUserId();
+      userId = await getUserId();
 
       wishListBloc.add(WishListCheckEvent(userId, widget.foods.sId!));
       cartBloc.add(GetCartEvent(userId, widget.foods.sId!));
-      context.read<CartBloc>().add(GetCartByIdEvent(userId, "1", "10"));
     });
   }
 
@@ -61,14 +60,17 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: BlocBuilder<CartBloc, CartState>(
+            child: BlocConsumer<CartBloc, CartState>(
+              bloc: context.read<CartBloc>()
+                ..add(GetCartByIdEvent(userId, "1", "100")),
+              listener: (context, state) {},
               builder: (context, state) {
                 if (state is GetCartByIdLoadedState) {
                   return Badge(
                     alignment: Alignment.topRight,
                     backgroundColor: Colors.red,
                     isLabelVisible: true,
-                    label: Text(state.cartList.length.toString()),
+                    label: Text("${state.cartList.length}"),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -110,236 +112,199 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
           ),
         ],
       ),
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<CartBloc, CartState>(
-            bloc: cartBloc,
-            listener: (context, state) {
-              if (state is CartLoadedState) {
-                print("Is in cart: ${state.isInCart}");
-                cartButtonName = state.isInCart == false
-                    ? "Add to Cart"
-                    : "Remove from Cart";
-              }
-            },
-          ),
-          BlocListener<WishListBloc, WishListState>(
-            bloc: wishListBloc,
-            listener: (context, state) {
-              if (state is WishListLoadedState) {
-                print("Is in wish list: ${state.isInWishList}");
-                favoriteIcon = state.isInWishList == false
-                    ? Icons.favorite_outline
-                    : Icons.favorite;
-              }
-            },
-          ),
-        ],
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: widget.foods.image.toString(),
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Center(
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            "https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => const Center(
-                      child: Icon(Icons.error),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: widget.foods.image.toString(),
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "https://www.pulsecarshalton.co.uk/wp-content/uploads/2016/08/jk-placeholder-image.jpg",
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    left: 0,
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: BlocBuilder<WishListBloc, WishListState>(
-                        bloc: wishListBloc,
-                        builder: (context, state) {
-                          if (state is WishListLoadingState) {
-                            return const Icon(
-                              Icons.favorite,
-                              size: 50,
-                            ).shimmer();
-                          }
-                          return BlocListener<WishListBloc, WishListState>(
-                            bloc: addOrRemoveFromWishList,
-                            listener: (context, state) {
-                              if (state is AddOrRemoveFromWishListLoadedState) {
-                                setState(() {
-                                  favoriteIcon == Icons.favorite_outline
-                                      ? favoriteIcon = Icons.favorite
-                                      : favoriteIcon = Icons.favorite_outline;
-                                });
-                                // show snackbar
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(state.message),
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              } else if (state
-                                  is AddOrRemoveFromWishListErrorState) {
-                                setState(() {
-                                  favoriteIcon == Icons.favorite_outline
-                                      ? favoriteIcon = Icons.favorite
-                                      : favoriteIcon = Icons.favorite_outline;
-                                });
-                              }
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(Icons.error),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: BlocBuilder<WishListBloc, WishListState>(
+                      bloc: wishListBloc,
+                      builder: (context, state) {
+                        if (state is WishListLoadingState) {
+                          return const Icon(
+                            Icons.favorite,
+                            size: 50,
+                          ).shimmer();
+                        }
+                        return BlocListener<WishListBloc, WishListState>(
+                          bloc: addOrRemoveFromWishList,
+                          listener: (context, state) {
+                            if (state is AddOrRemoveFromWishListLoadedState) {
+                              // show dialog
+                            } else if (state
+                                is AddOrRemoveFromWishListErrorState) {
+                              setState(() {
+                                favoriteIcon == Icons.favorite_outline
+                                    ? favoriteIcon = Icons.favorite
+                                    : favoriteIcon = Icons.favorite_outline;
+                              });
+                            }
+                          },
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                favoriteIcon == Icons.favorite_outline
+                                    ? favoriteIcon = Icons.favorite
+                                    : favoriteIcon = Icons.favorite_outline;
+                              });
+                              addOrRemoveFromWishList.add(
+                                AddOrRemoveFromWishListEvent(
+                                  userId,
+                                  widget.foods.sId!,
+                                ),
+                              );
                             },
-                            child: IconButton(
-                              onPressed: () {
-                                addOrRemoveFromWishList.add(
-                                  AddOrRemoveFromWishListEvent(
-                                    userId,
-                                    widget.foods.sId!,
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                favoriteIcon,
-                                color: Colors.red,
-                                size: 50,
-                              ),
+                            icon: Icon(
+                              favoriteIcon,
+                              color: Colors.red,
+                              size: 50,
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.foods.foodName!,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    width: 10,
-                    child: const Text("-"),
-                  ),
-                  Text(
-                    "Rs.${widget.foods.price}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey[300],
                 ),
-                child: Text(
-                  widget.foods.description!,
-                  style: const TextStyle(fontSize: 15),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              // reviews button
-
-              TextButton(
-                style:
-                    TextButton.styleFrom(foregroundColor: AppColors.blackColor),
-                onPressed: () {},
-                child: const Text(
-                  "Show Reviews >",
-                  style: TextStyle(
-                    fontSize: 15,
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.foods.foodName!,
+                  style: const TextStyle(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  width: 10,
+                  child: const Text("-"),
+                ),
+                Text(
+                  "Rs.${widget.foods.price}",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey[300],
               ),
+              child: Text(
+                widget.foods.description!,
+                style: const TextStyle(fontSize: 15),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // reviews button
 
-              BlocConsumer<CartBloc, CartState>(
-                bloc: cartBloc,
-                listener: (context, state) {
-                  if (state is AddOrRemoveFromCartLoadedState) {
-                    cartButtonName == "Remove from Cart"
-                        ? cartButtonName = "Add to Cart"
-                        : cartButtonName = "Remove from Cart";
-                  } else if (state is AddOrRemoveFromCartErrorState) {
-                    cartButtonName == "Remove from Cart"
-                        ? cartButtonName = "Add to Cart"
-                        : cartButtonName = "Remove from Cart";
-                  }
-                },
-                builder: (context, state) {
-                  if (state is CartLoadingState) {
-                    return ButtonWidget(
-                      child: const Icon(
-                        Icons.shopping_cart_outlined,
-                        size: 30,
-                        color: AppColors.blackColor,
-                      ).shimmer(
-                        secondaryColor: Colors.black,
-                      ),
-                      onPressed: () {},
-                    ).paddingAll(10);
-                  }
+            TextButton(
+              style:
+                  TextButton.styleFrom(foregroundColor: AppColors.blackColor),
+              onPressed: () {},
+              child: const Text(
+                "Show Reviews >",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
 
-                  return BlocListener(
-                    bloc: addOrRemoveFromCart,
-                    listener: (context, state) {
-                      if (state is AddOrRemoveFromCartLoadedState) {
-                        setState(() {
-                          cartButtonName == "Remove from Cart"
-                              ? cartButtonName = "Add to Cart"
-                              : cartButtonName = "Remove from Cart";
-                        });
-                        // show snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
-                        context
-                            .read<CartBloc>()
-                            .add(GetCartByIdEvent(userId, "1", "10"));
-                      } else if (state is AddOrRemoveFromCartErrorState) {
-                        setState(
-                          () {
-                            cartButtonName == "Remove from Cart"
-                                ? cartButtonName = "Add to Cart"
-                                : cartButtonName = "Remove from Cart";
-                          },
-                        );
-                      }
+            BlocConsumer<CartBloc, CartState>(
+              bloc: cartBloc,
+              listener: (context, state) {
+                if (state is AddOrRemoveFromCartLoadedState) {
+                  cartButtonName == "Remove from Cart"
+                      ? cartButtonName = "Add to Cart"
+                      : cartButtonName = "Remove from Cart";
+                } else if (state is AddOrRemoveFromCartErrorState) {
+                  cartButtonName == "Remove from Cart"
+                      ? cartButtonName = "Add to Cart"
+                      : cartButtonName = "Remove from Cart";
+                }
+              },
+              builder: (context, state) {
+                if (state is CartLoadingState) {
+                  return ButtonWidget(
+                    child: const Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 30,
+                      color: AppColors.blackColor,
+                    ).shimmer(
+                      secondaryColor: Colors.black,
+                    ),
+                    onPressed: () {},
+                  ).paddingAll(10);
+                }
+
+                return BlocListener(
+                  bloc: addOrRemoveFromCart,
+                  listener: (context, state) {
+                    if (state is AddOrRemoveFromCartLoadedState) {
+                      context
+                          .read<CartBloc>()
+                          .add(GetCartByIdEvent(userId, "1", "100"));
+                    }
+                    if (state is AddOrRemoveFromCartErrorState) {
+                      setState(() {
+                        cartButtonName == "Remove from Cart"
+                            ? cartButtonName = "Add to Cart"
+                            : cartButtonName = "Remove from Cart";
+                      });
+                    }
+                    context
+                        .read<CartBloc>()
+                        .add(GetCartByIdEvent(userId, "1", "100"));
+                  },
+                  child: ButtonWidget(
+                    text: cartButtonName,
+                    onPressed: () {
+                      setState(() {
+                        cartButtonName == "Remove from Cart"
+                            ? cartButtonName = "Add to Cart"
+                            : cartButtonName = "Remove from Cart";
+                      });
+                      addOrRemoveFromCart.add(
+                          AddOrRemoveFromCartEvent(userId, widget.foods.sId!));
                     },
-                    child: ButtonWidget(
-                      text: cartButtonName,
-                      onPressed: () {
-                        addOrRemoveFromCart.add(AddOrRemoveFromCartEvent(
-                            userId, widget.foods.sId!));
-                      },
-                    ).paddingAll(10),
-                  );
-                },
-              ),
-            ],
-          ),
+                  ).paddingAll(10),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

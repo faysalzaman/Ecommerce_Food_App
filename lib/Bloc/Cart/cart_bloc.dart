@@ -27,7 +27,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           }
         }
         if (event is GetCartByIdEvent) {
-          emit(CartLoadingState());
+          emit(GetCartByIdLoading());
           try {
             bool networkStatus = await isNetworkAvailable();
             if (networkStatus) {
@@ -38,10 +38,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               );
               emit(GetCartByIdLoadedState(foods.data));
             } else {
-              emit(CartErrorState("No Internet Connection"));
+              emit(GetCartByIdErrorState("No Internet Connection"));
             }
           } catch (e) {
-            emit(CartErrorState(e.toString().replaceAll("Exception:", "")));
+            emit(GetCartByIdErrorState(
+                e.toString().replaceAll("Exception:", "")));
           }
         }
         if (event is AddOrRemoveFromCartEvent) {

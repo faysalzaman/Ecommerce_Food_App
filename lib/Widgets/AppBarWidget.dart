@@ -16,18 +16,21 @@ class AppBarWidget extends StatefulWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
+  String userId = '';
+
   Future<String> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String userId = prefs.getString("userId").toString();
+    String usrId = prefs.getString("userId").toString();
+    setState(() {
+      userId = usrId;
+    });
     return userId;
   }
 
   @override
   void initState() {
     super.initState();
-    getUserId().then((value) {
-      context.read<CartBloc>().add(GetCartByIdEvent(value, "1", "10"));
-    });
+    getUserId();
   }
 
   @override
@@ -44,6 +47,8 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       elevation: 0,
       actions: [
         BlocBuilder<CartBloc, CartState>(
+          bloc: context.read<CartBloc>()
+            ..add(GetCartByIdEvent(userId, "1", "10")),
           builder: (context, state) {
             if (state is GetCartByIdLoadedState) {
               return Badge(
