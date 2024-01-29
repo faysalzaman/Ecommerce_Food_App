@@ -204,23 +204,50 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             ),
                           ),
                         ),
-                        BlocListener(
+                        BlocConsumer(
                           bloc: removeFromWishList,
                           listener: (BuildContext context, st) {},
-                          child: IconButton(
-                            onPressed: () {
-                              removeFromWishList.add(
-                                AddOrRemoveFromWishListEvent(
-                                  userId,
-                                  state.foods[index].sId.toString(),
+                          builder: (context, st) {
+                            if (st is AddOrRemoveFromWishListLoading) {
+                              return IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.grey,
+                                ),
+                              ).shimmer();
+                            } else if (state
+                                is AddOrRemoveFromWishListLoadedState) {
+                              return IconButton(
+                                onPressed: () {
+                                  removeFromWishList.add(
+                                    AddOrRemoveFromWishListEvent(
+                                      userId,
+                                      state.foods[index].sId.toString(),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
                                 ),
                               );
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                          ),
+                            }
+                            return IconButton(
+                              onPressed: () {
+                                removeFromWishList.add(
+                                  AddOrRemoveFromWishListEvent(
+                                    userId,
+                                    state.foods[index].sId.toString(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
