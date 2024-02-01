@@ -86,4 +86,55 @@ class CartController {
       throw Exception(e);
     }
   }
+
+  // increament
+  static Future<ApiResponse> increamentCartItem(
+    String userId,
+    String foodId,
+  ) async {
+    var url =
+        "${AppUrls.baseUrl}/food-item-addtocart-quantity-inc?userId=$userId&foodId=$foodId";
+    try {
+      var response = await ApiManager.bodyLessPut(url);
+
+      var data = jsonDecode(response.body);
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        return ApiResponse.fromJson(data, (data) => null);
+      } else {
+        String error = data['message'];
+        throw Exception(error);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  } 
+
+  // decreament 
+  static Future<ApiResponse> decreamentCartItem(
+    String userId,
+    String foodId,
+  ) async {
+    var url =
+        "${AppUrls.baseUrl}/food-item-addtocart-quantity-dec?userId=$userId&foodId=$foodId";
+    try {
+      var response = await ApiManager.bodyLessPut(url);
+
+      var data = jsonDecode(response.body);
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        return ApiResponse.fromJson(data, (data) => null);
+      } else {
+        String error = data['message'];
+        throw Exception(error);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  } 
+  
 }

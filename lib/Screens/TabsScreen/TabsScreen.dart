@@ -22,7 +22,9 @@ class _TabsScreenState extends State<TabsScreen> {
   var _selectedTab = _SelectedTab.home;
 
   var pages = [
-    const HomeScreen(),
+    HomeScreen(
+      userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch()),
+    ),
     const FavoriteScreen(),
     Container(
       color: Colors.green,
@@ -31,7 +33,8 @@ class _TabsScreenState extends State<TabsScreen> {
       color: Colors.yellow,
     ),
     UserDetailsScreen(
-        userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch())),
+      userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch()),
+    ),
   ];
 
   void _handleIndexChanged(int i) {
@@ -89,7 +92,7 @@ class _TabsScreenState extends State<TabsScreen> {
           CrystalNavigationBarItem(
             icon: IconlyBold.profile,
             unselectedIcon: IconlyLight.user,
-            selectedColor: Colors.white,
+            selectedColor: Colors.green,
           ),
         ],
       ),

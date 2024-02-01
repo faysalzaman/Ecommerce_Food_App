@@ -24,23 +24,44 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: BlocBuilder<UserDetailsBloc, UserDetailsState>(
-          bloc: widget.userDetailsBloc,
-          builder: (context, state) {
-            if (state is UserDetailsStateSuccess) {
-              return UserInfoWidget(
-                userDetailsBloc: widget.userDetailsBloc,
-                image: state.userDetailsModel.data!.profileImage.toString(),
-                fullName: state.userDetailsModel.data!.fullname.toString(),
-                phoneNo: state.userDetailsModel.data!.phone.toString(),
-              );
-            } else if (state is UserDetailsStateLoading) {
-              return UserInfoWidgetShimmer();
-            }
-            return Container();
-          },
-        ),
+      body: Stack(
+        children: [
+          Container(
+            width: context.screenWidth,
+            height: context.screenHeight,
+            child: CachedNetworkImage(
+              imageUrl:
+                  "https://w0.peakpx.com/wallpaper/565/109/HD-wallpaper-vintage-ink-food-background-material-food-background-food-background-hand-drawn-lettering.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              child: BlocBuilder<UserDetailsBloc, UserDetailsState>(
+                bloc: widget.userDetailsBloc,
+                builder: (context, state) {
+                  if (state is UserDetailsStateSuccess) {
+                    return UserInfoWidget(
+                      userDetailsBloc: widget.userDetailsBloc,
+                      image:
+                          state.userDetailsModel.data!.profileImage.toString(),
+                      fullName:
+                          state.userDetailsModel.data!.fullname.toString(),
+                      phoneNo: state.userDetailsModel.data!.phone.toString(),
+                    );
+                  } else if (state is UserDetailsStateLoading) {
+                    return UserInfoWidgetShimmer();
+                  }
+                  return Container();
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

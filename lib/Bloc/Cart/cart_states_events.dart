@@ -60,3 +60,39 @@ class AddOrRemoveFromCartErrorState extends CartState {
 }
 
 class AddOrRemoveFromCartLoading extends CartState {}
+
+class IncreaseQtyEvent extends CartEvent {
+  final String userId;
+  final String foodId;
+  IncreaseQtyEvent(this.userId, this.foodId);
+}
+
+class IncreaseQtyLoadedState extends CartState {
+  final String message;
+  IncreaseQtyLoadedState(this.message);
+}
+
+class IncreaseQtyErrorState extends CartState {
+  final String message;
+  IncreaseQtyErrorState(this.message);
+}
+
+class IncreaseQtyLoading extends CartState {}
+
+class DecreaseQtyEvent extends CartEvent {
+  final String userId;
+  final String foodId;
+  DecreaseQtyEvent(this.userId, this.foodId);
+}
+
+class DecreaseQtyLoadedState extends CartState {
+  final String message;
+  DecreaseQtyLoadedState(this.message);
+}
+
+class DecreaseQtyErrorState extends CartState {
+  final String message;
+  DecreaseQtyErrorState(this.message);
+}
+
+class DecreaseQtyLoading extends CartState {}

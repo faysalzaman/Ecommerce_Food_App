@@ -48,7 +48,6 @@ class WishListBloc extends Bloc<WishListEvent, WishListState> {
     );
     on<GetFoodsInFavoriteEvent>(
       (event, emit) async {
-        emit(WishListLoadingState());
         try {
           bool networkStatus = await isNetworkAvailable();
           if (networkStatus) {

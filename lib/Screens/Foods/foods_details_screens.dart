@@ -2,15 +2,18 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/Cart/cart_bloc.dart';
+import 'package:food_ecommerce_app/Bloc/Review/review_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/WishList/wish_list_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/WishList/wish_list_states_events.dart';
 import 'package:food_ecommerce_app/Model/Items/FoodsByCategoryModel.dart';
 import 'package:food_ecommerce_app/Screens/Cart/cart_screen.dart';
+import 'package:food_ecommerce_app/Screens/Review/review_screen.dart';
 import 'package:food_ecommerce_app/Utils/constants.dart';
 import 'package:food_ecommerce_app/Widgets/ButtonWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class FoodsDetailsScreen extends StatefulWidget {
@@ -30,8 +33,10 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
   WishListBloc addOrRemoveFromWishList = WishListBloc();
   CartBloc cartBloc = CartBloc();
   CartBloc addOrRemoveFromCart = CartBloc();
+  ReviewBloc getCartLength = ReviewBloc();
 
   String userId = "";
+  int reviewLength = 0;
 
   Future<String> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -51,6 +56,7 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
 
         wishListBloc.add(WishListCheckEvent(userId, widget.foods.sId!));
         cartBloc.add(GetCartEvent(userId, widget.foods.sId!));
+        getCartLength.add(ReviewLengthEvent(widget.foods.sId!));
       },
     );
   }
@@ -151,13 +157,9 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
                       listener: (context, state) {
                         if (state is WishListLoadedState) {
                           if (state.isInWishList) {
-                            setState(() {
-                              favoriteIcon = Icons.favorite;
-                            });
+                            favoriteIcon = Icons.favorite;
                           } else {
-                            setState(() {
-                              favoriteIcon = Icons.favorite_outline;
-                            });
+                            favoriteIcon = Icons.favorite_outline;
                           }
                         }
                       },
@@ -189,42 +191,72 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
                             ),
                           );
                         }
-                        return BlocListener<WishListBloc, WishListState>(
+                        return BlocConsumer<WishListBloc, WishListState>(
                           bloc: addOrRemoveFromWishList,
                           listener: (context, state) {
                             if (state is AddOrRemoveFromWishListLoadedState) {
-                              // show dialog
+                              state.message == "Added to WishList"
+                                  ? favoriteIcon = Icons.favorite
+                                  : favoriteIcon = Icons.favorite_outline;
                             } else if (state
                                 is AddOrRemoveFromWishListErrorState) {
-                              setState(
-                                () {
+                              favoriteIcon == Icons.favorite_outline
+                                  ? favoriteIcon = Icons.favorite
+                                  : favoriteIcon = Icons.favorite_outline;
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state is AddOrRemoveFromWishListLoading) {
+                              return const Icon(
+                                Icons.favorite,
+                                size: 50,
+                              ).shimmer();
+                            }
+                            if (state is AddOrRemoveFromWishListLoadedState) {
+                              return IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    favoriteIcon == Icons.favorite_outline
+                                        ? favoriteIcon = Icons.favorite
+                                        : favoriteIcon = Icons.favorite_outline;
+                                  });
+
+                                  addOrRemoveFromWishList.add(
+                                    AddOrRemoveFromWishListEvent(
+                                      userId,
+                                      widget.foods.sId!,
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  favoriteIcon,
+                                  color: Colors.red,
+                                  size: 50,
+                                ),
+                              );
+                            }
+                            return IconButton(
+                              onPressed: () {
+                                setState(() {
                                   favoriteIcon == Icons.favorite_outline
                                       ? favoriteIcon = Icons.favorite
                                       : favoriteIcon = Icons.favorite_outline;
-                                },
-                              );
-                            }
+                                });
+
+                                addOrRemoveFromWishList.add(
+                                  AddOrRemoveFromWishListEvent(
+                                    userId,
+                                    widget.foods.sId!,
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                favoriteIcon,
+                                color: Colors.red,
+                                size: 50,
+                              ),
+                            );
                           },
-                          child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                favoriteIcon == Icons.favorite_outline
-                                    ? favoriteIcon = Icons.favorite
-                                    : favoriteIcon = Icons.favorite_outline;
-                              });
-                              addOrRemoveFromWishList.add(
-                                AddOrRemoveFromWishListEvent(
-                                  userId,
-                                  widget.foods.sId!,
-                                ),
-                              );
-                            },
-                            icon: Icon(
-                              favoriteIcon,
-                              color: Colors.red,
-                              size: 50,
-                            ),
-                          ),
                         );
                       },
                     ),
@@ -275,17 +307,66 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
             ),
             // reviews button
 
-            TextButton(
-              style:
-                  TextButton.styleFrom(foregroundColor: AppColors.blackColor),
-              onPressed: () {},
-              child: const Text(
-                "Show Reviews >",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                      foregroundColor: AppColors.blackColor),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: ReviewScreen(
+                          foodId: widget.foods.sId!,
+                          userId: userId,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Show Reviews >",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+                BlocConsumer<ReviewBloc, ReviewState>(
+                  bloc: getCartLength,
+                  listener: (context, state) {
+                    if (state is ReviewLengthLoadedState) {
+                      reviewLength = state.length;
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is ReviewLengthLoadingState) {
+                      return const Text(
+                        "(0)",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ).shimmer();
+                    } else if (state is ReviewLengthLoadedState) {
+                      return Text(
+                        "($reviewLength)",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                    return Text(
+                      "($reviewLength)",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
 
             BlocConsumer<CartBloc, CartState>(
@@ -324,11 +405,13 @@ class _FoodsDetailsScreenState extends State<FoodsDetailsScreen> {
                           .add(GetCartByIdEvent(userId, "1", "100"));
                     }
                     if (state is AddOrRemoveFromCartErrorState) {
-                      setState(() {
-                        cartButtonName == "Remove from Cart"
-                            ? cartButtonName = "Add to Cart"
-                            : cartButtonName = "Remove from Cart";
-                      });
+                      setState(
+                        () {
+                          cartButtonName == "Remove from Cart"
+                              ? cartButtonName = "Add to Cart"
+                              : cartButtonName = "Remove from Cart";
+                        },
+                      );
                     }
 
                     context

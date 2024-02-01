@@ -30,7 +30,8 @@ class AddOrRemoveFromWishListEvent extends WishListEvent {
   AddOrRemoveFromWishListEvent(this.userId, this.foodId);
 }
 
-class AddOrRemoveFromWishListLoadedState extends WishListState {
+class AddOrRemoveFromWishListLoadedState extends WishListState { 
+  
   final String message;
   AddOrRemoveFromWishListLoadedState(this.message);
 }
@@ -58,5 +59,3 @@ class GetFoodsInFavoriteErrorState extends WishListState {
   final String message;
   GetFoodsInFavoriteErrorState(this.message);
 }
-
-class GetFoodsInFavoriteLoading extends WishListState {}

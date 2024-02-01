@@ -48,7 +48,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       actions: [
         BlocBuilder<CartBloc, CartState>(
           bloc: context.read<CartBloc>()
-            ..add(GetCartByIdEvent(userId, "1", "10")),
+            ..add(GetCartByIdEvent(userId, "1", "100")),
           builder: (context, state) {
             if (state is GetCartByIdLoadedState) {
               return Badge(
@@ -102,7 +102,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           ),
           child: const CircleAvatar(
             backgroundImage: AssetImage(
-              "assets/appLogo.jpg",
+              "assets/appLogo.png",
             ),
           ),
         ),

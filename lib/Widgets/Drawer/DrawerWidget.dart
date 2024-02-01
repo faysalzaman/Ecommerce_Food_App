@@ -1,9 +1,21 @@
 // ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unused_element
 
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
+import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class DrawerWidget extends StatefulWidget {
+  final UserDetailsBloc userDetailsBloc;
+
+  const DrawerWidget({
+    super.key,
+    required this.userDetailsBloc,
+  });
+
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
 }
@@ -21,41 +33,63 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   Widget build(BuildContext context) {
     return AwesomeDrawerBar(
       controller: _drawerController,
-      slideHeight: MediaQuery.of(context).size.height * .75,
       type: StyleState.scaleBottom,
       menuScreen: Container(
-        width: MediaQuery.of(context).size.width * .85,
+        width: MediaQuery.of(context).size.width * .9,
         color: Colors.white,
-        child: const Center(
-          child: Text(
-            'Menu Screen',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 1,
+              child: CachedNetworkImage(
+                imageUrl:
+                    "https://w0.peakpx.com/wallpaper/565/109/HD-wallpaper-vintage-ink-food-background-material-food-background-food-background-hand-drawn-lettering.jpg",
+                fit: BoxFit.fill,
+                repeat: ImageRepeat.noRepeat,
+              ),
             ),
-          ),
+            BlocBuilder<UserDetailsBloc, UserDetailsState>(
+              bloc: widget.userDetailsBloc,
+              builder: (context, state) {
+                return Positioned(
+                    top: context.screenHeight * .3,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: state is UserDetailsStateSuccess
+                        ? Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 100,
+                                backgroundImage: CachedNetworkImageProvider(
+                                  state.userDetailsModel.data!.profileImage!,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                state.userDetailsModel.data!.fullname!,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Container());
+              },
+            ),
+          ],
         ),
       ),
-      mainScreen: Container(
-          // color: Colors.black,
-          // child: Center(
-          //   child: Text(
-          //     'Home Screen',
-          //     style: TextStyle(
-          //       fontSize: 24,
-          //       fontWeight: FontWeight.bold,
-          //     ),
-          //   ),
-          // ),
-          ),
       borderRadius: 24.0,
       showShadow: false,
-      angle: -12.0,
       isRTL: false,
       backgroundColor: Colors.black12,
       slideWidth: MediaQuery.of(context).size.width * .65,
       openCurve: Curves.easeInCubic,
       closeCurve: Curves.bounceIn,
+      mainScreen: Container(),
     );
   }
 }

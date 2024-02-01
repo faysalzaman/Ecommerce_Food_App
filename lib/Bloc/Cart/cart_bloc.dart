@@ -63,6 +63,48 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 e.toString().replaceAll("Exception:", "")));
           }
         }
+        if (event is IncreaseQtyEvent) {
+          emit(IncreaseQtyLoading());
+          try {
+            bool networkStatus = await isNetworkAvailable();
+            if (networkStatus) {
+              final foods = await CartController.increamentCartItem(
+                event.userId,
+                event.foodId,
+              );
+              emit(IncreaseQtyLoadedState(foods.message.toString()));
+            } else {
+              emit(IncreaseQtyErrorState("No Internet Connection"));
+            }
+          } catch (e) {
+            emit(
+              IncreaseQtyErrorState(
+                e.toString().replaceAll("Exception:", ""),
+              ),
+            );
+          }
+        }
+        if (event is DecreaseQtyEvent) {
+          emit(DecreaseQtyLoading());
+          try {
+            bool networkStatus = await isNetworkAvailable();
+            if (networkStatus) {
+              final foods = await CartController.decreamentCartItem(
+                event.userId,
+                event.foodId,
+              );
+              emit(DecreaseQtyLoadedState(foods.message.toString()));
+            } else {
+              emit(DecreaseQtyErrorState("No Internet Connection"));
+            }
+          } catch (e) {
+            emit(
+              DecreaseQtyErrorState(
+                e.toString().replaceAll("Exception:", ""),
+              ),
+            );
+          }
+        }
       },
     );
   }

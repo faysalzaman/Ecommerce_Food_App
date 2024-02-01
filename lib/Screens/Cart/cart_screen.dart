@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/Cart/cart_bloc.dart';
+import 'package:food_ecommerce_app/Screens/Cart/quantity_widget.dart';
 import 'package:food_ecommerce_app/Screens/TabsScreen/TabsScreen.dart';
 import 'package:food_ecommerce_app/Utils/constants.dart';
 import 'package:food_ecommerce_app/Widgets/ButtonWidget.dart';
@@ -23,12 +24,16 @@ class _CartScreenState extends State<CartScreen> {
 
   int cartLength = 0;
 
+  CartBloc cartBloc = CartBloc();
+
   @override
   void initState() {
     super.initState();
-    getUserId().then((value) {
-      context.read<CartBloc>().add(GetCartByIdEvent(value, "1", "100"));
-    });
+    getUserId().then(
+      (value) {
+        cartBloc.add(GetCartByIdEvent(value, "1", "100"));
+      },
+    );
   }
 
   Future<String> getUserId() async {
@@ -77,109 +82,119 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         body: BlocConsumer<CartBloc, CartState>(
+          bloc: cartBloc,
           listener: (context, state) {
             if (state is GetCartByIdLoadedState) {
-              setState(() {
-                cartLength = state.cartList.length;
-              });
+              cartLength = state.cartList.length;
             } else if (state is AddOrRemoveFromCartLoadedState) {
-              setState(() {
-                cartLength = cartLength - 1;
-              });
+              cartLength = cartLength - 1;
             }
           },
           builder: (context, state) {
-            if (state is GetCartByIdLoading) {
-              return const CartShimmerWidget();
-            }
             if (state is GetCartByIdLoadedState) {
-              return ListView.builder(
-                itemCount: state.cartList.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: CachedNetworkImage(
-                              imageUrl: state.cartList[index].foodId!.image
-                                  .toString(),
-                              fit: BoxFit.cover,
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: state.cartList.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            margin: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
                               children: [
-                                Text(
-                                  state.cartList[index].foodId!.foodName
+                                SizedBox(
+                                  height: 100,
+                                  width: 100,
+                                  child: CachedNetworkImage(
+                                    imageUrl: state
+                                        .cartList[index].foodId!.image
+                                        .toString(),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        state.cartList[index].foodId!.foodName
+                                            .toString(),
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        "Rs. ${state.cartList[index].foodId!.price.toString()}",
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          var foodId = state
+                                              .cartList[index].foodId!.sId
+                                              .toString();
+                                          removeFromCart(foodId);
+                                          context.read<CartBloc>().add(
+                                                GetCartByIdEvent(
+                                                    userId, "1", "100"),
+                                              );
+                                          context.read<CartBloc>().add(
+                                                AddOrRemoveFromCartEvent(
+                                                    userId, foodId),
+                                              );
+                                        },
+                                        icon: const Icon(Icons.delete_forever),
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                QuantityWidget(
+                                  quantity: state.cartList[index].quantity!,
+                                  cartBloc: cartBloc,
+                                  userId: userId,
+                                  foodId: state.cartList[index].foodId!.sId
                                       .toString(),
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "Rs. ${state.cartList[index].foodId!.price.toString()}",
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    var foodId = state
-                                        .cartList[index].foodId!.sId
-                                        .toString();
-                                    removeFromCart(foodId);
-                                    context.read<CartBloc>().add(
-                                          GetCartByIdEvent(userId, "1", "100"),
-                                        );
-                                    context.read<CartBloc>().add(
-                                          AddOrRemoveFromCartEvent(
-                                              userId, foodId),
-                                        );
-                                  },
-                                  icon: const Icon(Icons.delete_forever),
-                                  color: Colors.red,
                                 ),
                               ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.remove),
-                              ),
-                              Text(
-                                state.cartList[index].quantity.toString(),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.add),
-                              ),
-                            ],
-                          ),
-                        ],
+                        );
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    flex: 0,
+                    child: Visibility(
+                      visible: cartLength > 0 ? true : false,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ButtonWidget(
+                          color: AppColors.primaryColor,
+                          text: "Proceed to Pay",
+                          onPressed: () {},
+                        ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ],
               );
-            } else {
+            } else if (state is GetCartByIdErrorState) {
               return Center(
                 child: CachedNetworkImage(
                   imageUrl: "https://www.buy.airoxi.com/img/empty-cart-1.png",
@@ -188,18 +203,8 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               );
             }
+            return const CartShimmerWidget();
           },
-        ),
-        bottomNavigationBar: Visibility(
-          visible: cartLength > 0,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ButtonWidget(
-              color: AppColors.primaryColor,
-              text: "Proceed to Pay",
-              onPressed: () {},
-            ),
-          ),
         ),
       ),
     );

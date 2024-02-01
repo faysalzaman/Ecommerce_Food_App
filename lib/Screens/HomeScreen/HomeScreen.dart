@@ -4,6 +4,7 @@ import 'package:food_ecommerce_app/Bloc/Categories/categories_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/Categories/categories_states_events.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_States_Events.dart';
+import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Widgets/AppBarWidget.dart';
 import 'package:food_ecommerce_app/Widgets/AvailableItemWidget.dart';
 import 'package:food_ecommerce_app/Widgets/CategoryItemWidget.dart';
@@ -13,7 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    required this.userDetailsBloc,
+  });
+
+  final UserDetailsBloc userDetailsBloc;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -62,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(60),
         child: AppBarWidget(),
       ),
-      drawer: DrawerWidget(),
+      drawer: DrawerWidget(userDetailsBloc: widget.userDetailsBloc),
       body: SafeArea(
         child: Container(
           height: context.height(),

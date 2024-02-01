@@ -1,5 +1,6 @@
 // ignore_for_file: file_names, avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/Cart/cart_bloc.dart';
 import 'package:food_ecommerce_app/Controller/Auth/AuthController.dart';
 import 'package:food_ecommerce_app/Screens/Authentication/LoginSignupHomeScreen.dart';
@@ -8,6 +9,7 @@ import 'package:food_ecommerce_app/Utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -59,28 +61,41 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/appLogo.jpg',
-              height: MediaQuery.of(context).size.height * 0.5,
-              width: MediaQuery.of(context).size.width * 1,
+      body: Stack(
+        children: [
+          Container(
+            width: context.screenWidth,
+            height: context.screenHeight,
+            child: CachedNetworkImage(
+              imageUrl:
+                  "https://w0.peakpx.com/wallpaper/565/109/HD-wallpaper-vintage-ink-food-background-material-food-background-food-background-hand-drawn-lettering.jpg",
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(color: AppColors.primaryColor),
-            const SizedBox(height: 20),
-            const Text(
-              "Designed By \"FEW Team\"",
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/appLogo.png',
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                ),
+                const CircularProgressIndicator(
+                    color: Color.fromARGB(255, 255, 0, 85)),
+                const SizedBox(height: 20),
+                const Text(
+                  "Designed By \"FEW Team\"",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 0, 85),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
