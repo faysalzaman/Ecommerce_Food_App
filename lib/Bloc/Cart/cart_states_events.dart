@@ -41,7 +41,7 @@ class GetCartByIdErrorState extends CartState {
   GetCartByIdErrorState(this.message);
 }
 
-class GetCartByIdLoading extends CartState {}
+class GetCartByIdLoadingState extends CartState {}
 
 class AddOrRemoveFromCartEvent extends CartEvent {
   final String userId;

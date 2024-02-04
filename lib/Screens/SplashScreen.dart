@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: CachedNetworkImage(
               imageUrl:
                   "https://w0.peakpx.com/wallpaper/565/109/HD-wallpaper-vintage-ink-food-background-material-food-background-food-background-hand-drawn-lettering.jpg",
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Center(

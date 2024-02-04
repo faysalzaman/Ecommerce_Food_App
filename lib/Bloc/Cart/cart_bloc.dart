@@ -27,7 +27,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           }
         }
         if (event is GetCartByIdEvent) {
-          emit(GetCartByIdLoading());
+          emit(GetCartByIdLoadingState());
           try {
             bool networkStatus = await isNetworkAvailable();
             if (networkStatus) {

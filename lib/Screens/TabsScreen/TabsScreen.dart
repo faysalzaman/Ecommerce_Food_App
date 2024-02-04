@@ -4,12 +4,13 @@ import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
 import 'package:food_ecommerce_app/Screens/Favorite/favorite_screen.dart';
 import 'package:food_ecommerce_app/Screens/HomeScreen/HomeScreen.dart';
+import 'package:food_ecommerce_app/Screens/OdersHistory/orders_history_screen.dart';
 import 'package:food_ecommerce_app/Screens/UserDetails/UserDetailsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:iconly/iconly.dart';
 
-enum _SelectedTab { home, favorite, add, search, person }
+enum _SelectedTab { home, favorite, orders, search, person }
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -23,15 +24,10 @@ class _TabsScreenState extends State<TabsScreen> {
 
   var pages = [
     HomeScreen(
-      userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch()),
-    ),
+        userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch())),
     const FavoriteScreen(),
-    Container(
-      color: Colors.green,
-    ),
-    Container(
-      color: Colors.yellow,
-    ),
+    const OrdersHistoryScreen(),
+    Container(color: Colors.yellow),
     UserDetailsScreen(
       userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch()),
     ),
@@ -75,10 +71,10 @@ class _TabsScreenState extends State<TabsScreen> {
             selectedColor: Colors.red,
           ),
 
-          /// Add
+          /// Orders
           CrystalNavigationBarItem(
-            icon: IconlyBold.plus,
-            unselectedIcon: IconlyLight.plus,
+            icon: Icons.shopping_bag,
+            unselectedIcon: Icons.shopping_bag_outlined,
             selectedColor: Colors.green,
           ),
 
