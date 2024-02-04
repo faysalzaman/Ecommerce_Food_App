@@ -43,12 +43,12 @@ class _SplashScreenState extends State<SplashScreen> {
       const Duration(seconds: 3),
       () async {
         AuthController.refreshToken().then((value) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               PageTransition(
                   child: const TabsScreen(), type: PageTransitionType.fade));
         }).onError((error, stackTrace) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               PageTransition(
                   child: loginSignupHome(), type: PageTransitionType.fade));
@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors.whiteColor,
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             width: context.screenWidth,
             height: context.screenHeight,
             child: CachedNetworkImage(

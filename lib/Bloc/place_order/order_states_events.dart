@@ -1,4 +1,6 @@
 // events
+import 'package:food_ecommerce_app/Model/Order/OrdersByUserIdModel.dart';
+
 abstract class OrdersEvent {}
 
 class PlaceOrder extends OrdersEvent {
@@ -26,4 +28,26 @@ class PlaceOrderErrorState extends OrdersState {
   final String error;
 
   PlaceOrderErrorState(this.error);
+}
+
+class OrderByUserIdEvent extends OrdersEvent {
+  final String userId;
+  final String page;
+  final String pageSize;
+
+  OrderByUserIdEvent(this.userId, this.page, this.pageSize);
+}
+
+class OrderByUserIdLoadingState extends OrdersState {}
+
+class OrderByUserIdLoadedState extends OrdersState {
+  final List<OrdersByUserIdModel> data;
+
+  OrderByUserIdLoadedState(this.data);
+}
+
+class OrderByUserIdErrorState extends OrdersState {
+  final String error;
+
+  OrderByUserIdErrorState(this.error);
 }

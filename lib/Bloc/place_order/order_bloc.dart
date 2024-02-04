@@ -28,6 +28,28 @@ class OrderBloc extends Bloc<OrdersEvent, OrdersState> {
             );
           }
         }
+        if (event is OrderByUserIdEvent) {
+          emit(OrderByUserIdLoadingState());
+          try {
+            if (await isNetworkAvailable() == false) {
+              emit(OrderByUserIdErrorState("No Internet Connection"));
+              return;
+            }
+            final orders = await OrderController.getOrdersByUserId(
+              event.userId,
+              event.page,
+              event.pageSize,
+            );
+            emit(OrderByUserIdLoadedState(orders));
+          } catch (e) {
+            print(e);
+            emit(
+              OrderByUserIdErrorState(
+                e.toString().replaceAll("Exception:", ""),
+              ),
+            );
+          }
+        }
       },
     );
   }
