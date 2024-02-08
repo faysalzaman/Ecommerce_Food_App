@@ -1,7 +1,5 @@
 // ignore_for_file: file_names
 
-import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
-import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
 import 'package:food_ecommerce_app/Screens/Favorite/favorite_screen.dart';
 import 'package:food_ecommerce_app/Screens/HomeScreen/HomeScreen.dart';
 import 'package:food_ecommerce_app/Screens/OdersHistory/orders_history_screen.dart';

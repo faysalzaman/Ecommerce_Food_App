@@ -3,7 +3,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_States_Events.dart';
-import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Widgets/AppBarWidget.dart';
 import 'package:food_ecommerce_app/Widgets/AvailableItemWidget.dart';
 import 'package:food_ecommerce_app/Widgets/CategoryItemWidget.dart';
