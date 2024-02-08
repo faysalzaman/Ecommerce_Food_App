@@ -24,18 +24,14 @@ class RandomCategoryItemWidget extends StatefulWidget {
 class _RandomCategoryItemWidgetState extends State<RandomCategoryItemWidget> {
   int pageIndex = 0;
 
-  ItemsBloc itemsBloc = ItemsBloc();
-
   @override
   void initState() {
     super.initState();
-    itemsBloc.add(FetchItems());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ItemsBloc, ItemsState>(
-      bloc: itemsBloc,
       builder: (context, state) {
         if (state is ItemsLoaded) {
           return Stack(

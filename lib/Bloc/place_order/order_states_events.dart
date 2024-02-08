@@ -1,4 +1,5 @@
 // events
+import 'package:food_ecommerce_app/Model/Order/OrderItemByOrderIdModel.dart';
 import 'package:food_ecommerce_app/Model/Order/OrdersByUserIdModel.dart';
 
 abstract class OrdersEvent {}
@@ -51,3 +52,25 @@ class OrderByUserIdErrorState extends OrdersState {
 
   OrderByUserIdErrorState(this.error);
 }
+
+class OrderItemByOrderIdEvent extends OrdersEvent {
+  final String orderId;
+
+  OrderItemByOrderIdEvent(this.orderId);
+}
+
+class OrderItemByOrderIdLoadingState extends OrdersState {}
+
+class OrderItemByOrderIdLoadedState extends OrdersState {
+  final List<OrderItemByOrderIdModel> data;
+
+  OrderItemByOrderIdLoadedState(this.data);
+}
+
+class OrderItemByOrderIdErrorState extends OrdersState {
+  final String error;
+
+  OrderItemByOrderIdErrorState(this.error);
+}
+
+class OrderItemByOrderIdEmptyState extends OrdersState {}

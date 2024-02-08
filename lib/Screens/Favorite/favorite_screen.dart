@@ -5,7 +5,6 @@ import 'package:food_ecommerce_app/Bloc/WishList/wish_list_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/WishList/wish_list_states_events.dart';
 import 'package:food_ecommerce_app/Model/Items/FoodsByCategoryModel.dart';
 import 'package:food_ecommerce_app/Screens/Foods/foods_details_screens.dart';
-import 'package:food_ecommerce_app/Utils/constants.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -292,12 +291,83 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 ),
               );
             }
-            return const SizedBox(
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
-              ),
+            return ListView.builder(
+              itemCount: 3,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade300,
+                        ),
+                      ).shimmer(),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 20,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.grey.shade300,
+                                ),
+                              ).shimmer(),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                height: 20,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.grey.shade300,
+                                ),
+                              ).shimmer(),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                height: 20,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.grey.shade300,
+                                ),
+                              ).shimmer(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.grey,
+                        ),
+                      ).shimmer(),
+                    ],
+                  ),
+                );
+              },
             );
           },
         ),

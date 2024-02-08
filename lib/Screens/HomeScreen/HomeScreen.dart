@@ -1,7 +1,6 @@
 // ignore_for_file: file_names, prefer_const_constructors, sized_box_for_whitespace, must_be_immutable
 
-import 'package:food_ecommerce_app/Bloc/Categories/categories_bloc.dart';
-import 'package:food_ecommerce_app/Bloc/Categories/categories_states_events.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_States_Events.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
@@ -14,50 +13,19 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.userDetailsBloc,
-  });
-
-  final UserDetailsBloc userDetailsBloc;
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Map<String, dynamic>> products = [
-    {
-      'name': 'Pizza',
-      'category': 'Italian',
-      'image':
-          'https://www.allrecipes.com/thmb/ooZbu_yUBrGQ74uKbuOENWuNxMM=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/48727-Mikes-homemade-pizza-DDMFS-beauty-4x3-BG-2974-a7a9842c14e34ca699f3b7d7143256cf.jpg',
-      'price': 9.99,
-    },
-    {
-      'name': 'Tacos',
-      'category': 'Mexican',
-      'image':
-          'https://pinchandswirl.com/wp-content/uploads/2022/11/Lamb-Tacos__.jpg',
-      'price': 6.49,
-    },
-    {
-      'name': 'Shoyu Ramen',
-      'category': 'Japanese',
-      'image':
-          'https://www.myojousa.com/wp-content/uploads/2021/02/signatureshoyuramen-690x690.jpg',
-      'price': 9.99,
-    }
-  ];
-
-  CategoriesBloc categoriesBloc = CategoriesBloc();
   ItemsBloc itemsBloc = ItemsBloc();
 
   @override
   void initState() {
     super.initState();
 
-    categoriesBloc.add(CategoriesFetchEvent());
     itemsBloc.add(FetchItems());
   }
 
@@ -68,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(60),
         child: AppBarWidget(),
       ),
-      drawer: DrawerWidget(userDetailsBloc: widget.userDetailsBloc),
+      drawer: DrawerWidget(),
       body: SafeArea(
         child: Container(
           height: context.height(),
@@ -78,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                StatusWidget(),
                 RandomCategoryItemWidget(),
                 const SizedBox(height: 16),
                 Padding(
@@ -92,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.3,
-                  child: CategoryItemWidget(categoriesBloc: categoriesBloc),
+                  child: CategoryItemWidget(),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -106,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Container(
                   height: MediaQuery.of(context).size.height * 0.3,
-                  child: AvailableItemWidget(itemsBloc: itemsBloc),
+                  child: AvailableItemWidget(),
                 ),
                 // Padding(
                 //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -135,6 +104,37 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class StatusWidget extends StatefulWidget {
+  const StatusWidget({super.key});
+
+  @override
+  State<StatusWidget> createState() => _StatusWidgetState();
+}
+
+class _StatusWidgetState extends State<StatusWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 6,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+            child: CircleAvatar(
+              radius: 40,
+              backgroundImage: CachedNetworkImageProvider(
+                'https://hips.hearstapps.com/hmg-prod/images/classic-cheese-pizza-recipe-2-64429a0cb408b.jpg?crop=0.8888888888888888xw:1xh;center,top&resize=1200:*',
+              ),
+            ),
+          );
+        },
       ),
     );
   }

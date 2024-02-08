@@ -9,12 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class UserDetailsScreen extends StatefulWidget {
-  UserDetailsBloc userDetailsBloc;
-
-  UserDetailsScreen({
-    super.key,
-    required this.userDetailsBloc,
-  });
+  const UserDetailsScreen({super.key});
 
   @override
   State<UserDetailsScreen> createState() => _UserDetailsScreenState();
@@ -26,7 +21,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
+          SizedBox(
             width: context.screenWidth,
             height: context.screenHeight,
             child: CachedNetworkImage(
@@ -42,11 +37,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             bottom: 0,
             child: Container(
               child: BlocBuilder<UserDetailsBloc, UserDetailsState>(
-                bloc: widget.userDetailsBloc,
                 builder: (context, state) {
                   if (state is UserDetailsStateSuccess) {
                     return UserInfoWidget(
-                      userDetailsBloc: widget.userDetailsBloc,
                       image:
                           state.userDetailsModel.data!.profileImage.toString(),
                       fullName:
@@ -111,14 +104,12 @@ UserInfoWidgetShimmer() {
 }
 
 class UserInfoWidget extends StatelessWidget {
-  UserDetailsBloc userDetailsBloc;
   String image;
   String phoneNo;
   String fullName;
 
   UserInfoWidget({
     super.key,
-    required this.userDetailsBloc,
     required this.image,
     required this.phoneNo,
     required this.fullName,

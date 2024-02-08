@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
 import 'package:iconly/iconly.dart';
 
-enum _SelectedTab { home, favorite, orders, search, person }
+enum _SelectedTab { home, favorite, orders, person }
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
@@ -23,14 +23,10 @@ class _TabsScreenState extends State<TabsScreen> {
   var _selectedTab = _SelectedTab.home;
 
   var pages = [
-    HomeScreen(
-        userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch())),
+    const HomeScreen(),
     const FavoriteScreen(),
     const OrdersHistoryScreen(),
-    Container(color: Colors.yellow),
-    UserDetailsScreen(
-      userDetailsBloc: UserDetailsBloc()..add(UserDetailsEventFetch()),
-    ),
+    const UserDetailsScreen(),
   ];
 
   void _handleIndexChanged(int i) {
@@ -77,12 +73,6 @@ class _TabsScreenState extends State<TabsScreen> {
             unselectedIcon: Icons.shopping_bag_outlined,
             selectedColor: Colors.green,
           ),
-
-          /// Search
-          CrystalNavigationBarItem(
-              icon: IconlyBold.search,
-              unselectedIcon: IconlyLight.search,
-              selectedColor: Colors.green),
 
           /// Profile
           CrystalNavigationBarItem(

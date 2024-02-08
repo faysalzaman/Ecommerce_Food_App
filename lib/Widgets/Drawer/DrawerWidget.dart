@@ -9,12 +9,7 @@ import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.da
 import 'package:velocity_x/velocity_x.dart';
 
 class DrawerWidget extends StatefulWidget {
-  final UserDetailsBloc userDetailsBloc;
-
-  const DrawerWidget({
-    super.key,
-    required this.userDetailsBloc,
-  });
+  const DrawerWidget({super.key});
 
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
@@ -50,33 +45,49 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
             BlocBuilder<UserDetailsBloc, UserDetailsState>(
-              bloc: widget.userDetailsBloc,
               builder: (context, state) {
                 return Positioned(
-                    top: context.screenHeight * .3,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: state is UserDetailsStateSuccess
-                        ? Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 100,
-                                backgroundImage: CachedNetworkImageProvider(
-                                  state.userDetailsModel.data!.profileImage!,
-                                ),
+                  top: context.screenHeight * .3,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: state is UserDetailsStateSuccess
+                      ? Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 100,
+                              backgroundImage: CachedNetworkImageProvider(
+                                state.userDetailsModel.data!.profileImage!,
                               ),
-                              const SizedBox(height: 10),
-                              Text(
-                                state.userDetailsModel.data!.fullname!,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              state.userDetailsModel.data!.fullname ?? '',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          )
-                        : Container());
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Contact Us: ${state.userDetailsModel.data!.phone ?? ''}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "Address: ${state.userDetailsModel.data!.address ?? ''}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Container(),
+                );
               },
             ),
           ],

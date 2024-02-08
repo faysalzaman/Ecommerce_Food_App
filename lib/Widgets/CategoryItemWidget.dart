@@ -10,17 +10,11 @@ import 'package:page_transition/page_transition.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class CategoryItemWidget extends StatelessWidget {
-  CategoryItemWidget({
-    super.key,
-    required this.categoriesBloc,
-  });
-
-  CategoriesBloc categoriesBloc;
+  const CategoryItemWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoriesBloc, CategoriesState>(
-      bloc: categoriesBloc,
       builder: (context, state) {
         if (state is CategoriesLoadingState) {
           return const CategoriesItemWidgetShimmerWidget();

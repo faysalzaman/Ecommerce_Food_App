@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/place_order/order_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/place_order/order_states_events.dart';
 import 'package:food_ecommerce_app/Model/Order/OrdersByUserIdModel.dart';
+import 'package:food_ecommerce_app/Screens/OdersHistory/order_item_by_order_id_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:velocity_x/velocity_x.dart';
 
 class OrdersHistoryScreen extends StatefulWidget {
   const OrdersHistoryScreen({super.key});
@@ -57,8 +59,58 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
           },
           builder: (context, state) {
             if (state is OrderByUserIdLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return ListView.builder(
+                itemCount: 3,
+                shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      title: Container(
+                        width: 100,
+                        height: 20,
+                        color: Colors.grey[300],
+                      ).shimmer(),
+                      subtitle: Container(
+                        width: 100,
+                        height: 20,
+                        color: Colors.grey[300],
+                      ).shimmer(),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.grey[300],
+                        radius: 30,
+                      ).shimmer(),
+                      trailing: Column(
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 20,
+                            color: Colors.grey[300],
+                          ).shimmer(),
+                          Container(
+                            width: 100,
+                            height: 20,
+                            color: Colors.grey[300],
+                          ).shimmer(),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             } else if (state is OrderByUserIdLoadedState) {
               return ListView.builder(
@@ -82,12 +134,34 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
                       ],
                     ),
                     child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderItemByOrderIdScreen(
+                              orderId: orders[index].orderId.toString(),
+                            ),
+                          ),
+                        );
+                      },
                       title: Text(orders[index].user!.fullname.toString()),
-                      subtitle: Text(orders[index].totalPrice.toString()),
-                      leading: CachedNetworkImage(
-                        imageUrl: orders[index].user!.profileImage.toString(),
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
+                      subtitle: Row(
+                        children: [
+                          const Text(
+                            "Rs ",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          Text(
+                            orders[index].totalPrice.toString(),
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      ),
+                      leading: CircleAvatar(
+                        backgroundImage: CachedNetworkImageProvider(
+                          orders[index].user!.profileImage.toString(),
+                        ),
+                        radius: 30,
                       ),
                       trailing: Column(
                         children: [
@@ -95,11 +169,12 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
                             orders[index].status.toString(),
                             style: TextStyle(
                               color: orders[index].status.toString() ==
-                                      "Pending"
-                                  ? Colors.red
-                                  : orders[index].status.toString() == "Ordered"
+                                      "pending"
+                                  ? Colors.orange
+                                  : orders[index].status.toString() == "ordered"
                                       ? Colors.green
-                                      : Colors.yellow,
+                                      : Colors.red,
+                              fontSize: 15,
                             ),
                           ),
                           Text(
