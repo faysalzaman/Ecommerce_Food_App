@@ -68,16 +68,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvoked: (didPop) {
-        if (didPop) {
-          Navigator.of(context).pushReplacement(
-            PageTransition(
-              child: const TabsScreen(),
-              type: PageTransitionType.fade,
-            ),
-          );
-        }
-      },
+      canPop: false,
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(

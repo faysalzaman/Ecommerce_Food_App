@@ -38,11 +38,11 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.greenAccent[100],
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -55,112 +55,131 @@ class _SignupPageState extends State<SignupPage> {
         ),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                children: <Widget>[
-                  const Text(
-                    "Sign up",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Create an account, It's free",
-                    style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                  ),
-                ],
+      body: SafeArea(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: Colors.black,
+                width: 0.5,
               ),
             ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                children: <Widget>[
-                  TextFieldWidget(
-                    text: "Email",
-                    hint: "Enter email",
-                    obscureText: false,
-                    controller: emailController,
-                  ),
-                  TextFieldWidget(
-                    text: "Password",
-                    hint: "Enter password",
-                    obscureText: true,
-                    controller: passwordController,
-                  ),
-                  TextFieldWidget(
-                    text: "Confirm Password",
-                    hint: "Enter password",
-                    obscureText: true,
-                    controller: confirmPasswordController,
-                  ),
-                ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 10.0,
               ),
-            ),
-            BlocListener<AuthBloc, AuthState>(
-              bloc: signupBloc,
-              listener: (context, state) {
-                if (state is SignupSuccess) {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.fade,
-                      child: VarifyOtpScreen(
-                        email: emailController.text.trim(),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        "Sign up",
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
                       ),
+                      Text(
+                        "Create an account, It's free",
+                        style: TextStyle(fontSize: 15, color: Colors.grey[700]),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Column(
+                  children: <Widget>[
+                    TextFieldWidget(
+                      text: "Email",
+                      hint: "Enter email",
+                      obscureText: false,
+                      controller: emailController,
                     ),
-                  );
-                  return;
-                }
-                if (state is SignupFailure) {
-                  Navigator.pop(context);
-                  toast(state.error);
-                  return;
-                }
-                if (state is SignupLoading) {
-                  AppLoading(context);
-                }
-              },
-              child: ButtonWidget(
-                color: AppColors.primaryColor,
-                text: "Signup",
-                onPressed: () {
-                  if (emailController.text.isEmpty &&
-                      passwordController.text.isEmpty &&
-                      confirmPasswordController.text.isEmpty) {
-                    // hide keyboard
-                    FocusScope.of(context).unfocus();
-                    return;
-                  } else if (passwordController.text !=
-                      confirmPasswordController.text) {
-                    toast("Password and Confirm-Password should be same");
-                    return;
-                  }
-                  signupBloc.add(
-                    SignupButtonPressedEvent(
-                      email: emailController.text,
-                      password: passwordController.text,
+                    TextFieldWidget(
+                      text: "Password",
+                      hint: "Enter password",
+                      obscureText: true,
+                      controller: passwordController,
                     ),
-                  );
-                },
-              ),
+                    TextFieldWidget(
+                      text: "Confirm Password",
+                      hint: "Enter password",
+                      obscureText: true,
+                      controller: confirmPasswordController,
+                    ),
+                  ],
+                ),
+                BlocListener<AuthBloc, AuthState>(
+                  bloc: signupBloc,
+                  listener: (context, state) {
+                    if (state is SignupSuccess) {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.fade,
+                          child: VarifyOtpScreen(
+                            email: emailController.text.trim(),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+                    if (state is SignupFailure) {
+                      Navigator.pop(context);
+                      toast(state.error);
+                      return;
+                    }
+                    if (state is SignupLoading) {
+                      AppLoading(context);
+                    }
+                  },
+                  child: ButtonWidget(
+                    color: AppColors.primaryColor,
+                    text: "Signup",
+                    onPressed: () {
+                      if (emailController.text.isEmpty &&
+                          passwordController.text.isEmpty &&
+                          confirmPasswordController.text.isEmpty) {
+                        // hide keyboard
+                        FocusScope.of(context).unfocus();
+                        return;
+                      } else if (passwordController.text !=
+                          confirmPasswordController.text) {
+                        toast("Password and Confirm-Password should be same");
+                        return;
+                      }
+                      signupBloc.add(
+                        SignupButtonPressedEvent(
+                          email: emailController.text,
+                          password: passwordController.text,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Expanded(
+                //   child: Container(
+                //     height: MediaQuery.of(context).size.height / 4,
+                //     decoration: const BoxDecoration(
+                //       image: DecorationImage(
+                //         image: AssetImage('assets/background.png'),
+                //         fit: BoxFit.fill,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
             ),
-            // Expanded(
-            //   child: Container(
-            //     height: MediaQuery.of(context).size.height / 4,
-            //     decoration: const BoxDecoration(
-            //       image: DecorationImage(
-            //         image: AssetImage('assets/background.png'),
-            //         fit: BoxFit.fill,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-          ],
+          ),
         ),
       ),
     );

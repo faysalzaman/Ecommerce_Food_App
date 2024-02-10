@@ -56,6 +56,8 @@ dependencies:
   velocity_x: ^4.1.2
   timeago_flutter: ^3.6.0
   timeago: ^3.6.1
+  story_view: ^0.16.0
+  icons_launcher: ^2.1.7
 
 dev_dependencies:
   flutter_test:

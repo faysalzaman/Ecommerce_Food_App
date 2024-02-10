@@ -3,6 +3,7 @@ import 'package:food_ecommerce_app/Bloc/Categories/categories_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/Categories/categories_states_events.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/ItemsBloc/Items_States_Events.dart';
+import 'package:food_ecommerce_app/Bloc/Story/story_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
 import 'package:food_ecommerce_app/Bloc/WishList/wish_list_bloc.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<UserDetailsBloc>(
           create: (context) => UserDetailsBloc()..add(UserDetailsEventFetch()),
+        ),
+        BlocProvider<StoryBloc>(
+          create: (context) => StoryBloc()..add(FetchStoryEvent()),
         ),
       ],
       child: MaterialApp(

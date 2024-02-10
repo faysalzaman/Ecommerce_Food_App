@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unused_element
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unused_element, use_build_context_synchronously
 
 import 'package:awesome_drawer_bar/awesome_drawer_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_Bloc.dart';
 import 'package:food_ecommerce_app/Bloc/UserDetials/UserDetails_States_Events.dart';
+import 'package:food_ecommerce_app/Screens/Authentication/LoginSignupHomeScreen.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -23,6 +26,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   // _drawerController.toggle();
   // _drawerController.isOpen();
   // _drawerController.stateNotifier;
+
+  SharedPreferences? prefs;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +52,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             BlocBuilder<UserDetailsBloc, UserDetailsState>(
               builder: (context, state) {
                 return Positioned(
-                  top: context.screenHeight * .3,
+                  top: context.screenHeight * .25,
                   left: 0,
                   right: 0,
                   bottom: 0,
@@ -77,11 +82,26 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Text(
-                              "Address: ${state.userDetailsModel.data!.address ?? ''}",
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
+                            // Signout Button
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () async {
+                                prefs = await SharedPreferences.getInstance();
+                                prefs!.clear();
+                                Navigator.of(context)
+                                    .pushReplacement(PageTransition(
+                                  child: loginSignupHome(),
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                ));
+                              },
+                              child: const Text(
+                                'Sign Out',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
                               ),
                             ),
                           ],

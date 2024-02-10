@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unnecessary_null_comparison
 
 import 'dart:convert';
 
@@ -76,7 +76,10 @@ class WishListController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         List<FoodsByCategoryModel> foods = [];
         data["data"].forEach((v) {
-          foods.add(FoodsByCategoryModel.fromJson(v));
+          final food = FoodsByCategoryModel.fromJson(v);
+          if (food != null) {
+            foods.add(food);
+          }
         });
         return ApiResponse.fromJson(data, (data) => foods);
       } else {
