@@ -12,6 +12,6 @@ class AppColors {
 }
 
 class AppUrls {
-  static String baseUrl = "https://cute-blue-squid-toga.cyclic.app";
-  static String host = "cute-blue-squid-toga.cyclic.app";
+  static String baseUrl = "https://giddy-hen-kerchief.cyclic.app";
+  static String host = "giddy-hen-kerchief.cyclic.app";
 }
